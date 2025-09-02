@@ -1,10 +1,6 @@
 from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from config import Config
-
-db = SQLAlchemy()
-migrate = Migrate()
+from db import db, migrate
 
 def create_app():
     app = Flask(__name__)
@@ -33,23 +29,6 @@ def create_app():
     def handle_400(error):
         return jsonify({"error": "Bad request"}), 400
 
-    # CLI commands to prove SQLAlchemy + CLI usage
-    @app.cli.command("db_create")
-    def db_create():
-        with app.app_context():
-            db.create_all()
-            print("Database tables created")
-
-    @app.cli.command("db_drop")
-    def db_drop():
-        with app.app_context():
-            db.drop_all()
-            print("Database tables dropped")
-
-    @app.cli.command("seed")
-    def seed_command():
-        from seed import seed_data
-        seed_data(app)
-        print("Database seeded")
+    # Keep app-only CLI; dedicated CLI in cli.py
 
     return app
