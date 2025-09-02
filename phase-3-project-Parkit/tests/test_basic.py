@@ -33,9 +33,10 @@ def test_user_model_creation():
 def test_cli_db_create_and_create_user():
     app = setup_app_for_test()
     runner = CliRunner()
-    with app.app_context():
-        # invoke create_user
-        result = runner.invoke(cli, ["create-user"], input="Test User\ntest2@example.com\n")
-        assert result.exit_code == 0
-        assert "Created user id=" in result.output
+    # create tables via CLI first to simulate real usage
+    result_create = runner.invoke(cli, ["db-create"])
+    assert result_create.exit_code == 0
+    result = runner.invoke(cli, ["create-user"], input="Test User\ntest2@example.com\n")
+    assert result.exit_code == 0
+    assert "Created user id=" in result.output
 
